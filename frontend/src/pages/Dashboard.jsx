@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import api from "../services/api";
 import "./Dashboard.css";
+
 function Dashboard() {
   const [data, setData] = useState({});
 
   useEffect(() => {
     api.get("/dashboard")
       .then((res) => setData(res.data))
-      .catch(console.error);
+      .catch((err) => console.log(err));
   }, []);
 
   return (
@@ -18,17 +18,22 @@ function Dashboard() {
         <h2>InventoryMS</h2>
 
         <ul>
-<li>
-  <Link to="/products">📦 Products</Link>
-</li>
+          <li>
+            <a href="#">📊 Dashboard</a>
+          </li>
 
-<li>
-  <Link to="/customers">👥 Customers</Link>
-</li>
+          <li>
+            <a href="#">📦 Products</a>
+          </li>
 
-<li>
-  <Link to="/orders">🛒 Orders</Link>
-</li>        </ul>
+          <li>
+            <a href="#">👥 Customers</a>
+          </li>
+
+          <li>
+            <a href="#">🛒 Orders</a>
+          </li>
+        </ul>
       </div>
 
       <div className="content">
@@ -86,8 +91,8 @@ function Dashboard() {
                 <td>Processing</td>
               </tr>
             </tbody>
-
           </table>
+
         </div>
 
       </div>
