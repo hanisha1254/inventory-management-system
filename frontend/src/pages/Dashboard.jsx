@@ -18,11 +18,17 @@ function Dashboard() {
         <h2>InventoryMS</h2>
 
         <ul>
-          <li>📊 Dashboard</li>
-          <li>📦 Products</li>
-          <li>👥 Customers</li>
-          <li>🛒 Orders</li>
-        </ul>
+<li>
+  <Link to="/products">📦 Products</Link>
+</li>
+
+<li>
+  <Link to="/customers">👥 Customers</Link>
+</li>
+
+<li>
+  <Link to="/orders">🛒 Orders</Link>
+</li>        </ul>
       </div>
 
       <div className="content">
