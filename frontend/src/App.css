@@ -1,0 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #f5f7fb;
+  font-family: Arial, sans-serif;
+}
+
+.dashboard {
+  padding: 40px;
+}
+
+.dashboard h1 {
+  margin-bottom: 30px;
+  color: #1e293b;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card h3 {
+  color: #64748b;
+  margin-bottom: 10px;
+}
+
+.card h2 {
+  color: #2563eb;
+  font-size: 2rem;
+}
