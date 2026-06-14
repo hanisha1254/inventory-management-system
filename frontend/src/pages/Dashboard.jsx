@@ -2,11 +2,12 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import "./Dashboard.css";
 
-function Dashboard() {
+function Dashboard({ setPage }) {
   const [data, setData] = useState({});
 
   useEffect(() => {
-    api.get("/dashboard")
+    api
+      .get("/dashboard")
       .then((res) => setData(res.data))
       .catch((err) => console.log(err));
   }, []);
@@ -18,20 +19,20 @@ function Dashboard() {
         <h2>InventoryMS</h2>
 
         <ul>
-          <li>
-            <a href="#">📊 Dashboard</a>
+          <li onClick={() => setPage("dashboard")}>
+            📊 Dashboard
           </li>
 
-          <li>
-            <a href="#">📦 Products</a>
+          <li onClick={() => setPage("products")}>
+            📦 Products
           </li>
 
-          <li>
-            <a href="#">👥 Customers</a>
+          <li onClick={() => setPage("customers")}>
+            👥 Customers
           </li>
 
-          <li>
-            <a href="#">🛒 Orders</a>
+          <li onClick={() => setPage("orders")}>
+            🛒 Orders
           </li>
         </ul>
       </div>
@@ -60,7 +61,7 @@ function Dashboard() {
           </div>
 
           <div className="card">
-            <h3>Low Stock</h3>
+            <h3>Low Stock Products</h3>
             <h2>{data.low_stock_products || 0}</h2>
           </div>
 
@@ -89,6 +90,12 @@ function Dashboard() {
                 <td>#1002</td>
                 <td>Demo Customer</td>
                 <td>Processing</td>
+              </tr>
+
+              <tr>
+                <td>#1003</td>
+                <td>Demo Customer</td>
+                <td>Pending</td>
               </tr>
             </tbody>
           </table>
