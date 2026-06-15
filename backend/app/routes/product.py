@@ -7,128 +7,137 @@ from app.schemas.product import ProductCreate
 
 router = APIRouter()
 
+
 def get_db():
-db = SessionLocal()
-try:
-yield db
-finally:
-db.close()
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
 
 @router.post("/products")
 def create_product(
-product: ProductCreate,
-db: Session = Depends(get_db)
+    product: ProductCreate,
+    db: Session = Depends(get_db)
 ):
-existing = db.query(Product).filter(
-Product.sku == product.sku
-).first()
+    existing = db.query(Product).filter(
+        Product.sku == product.sku
+    ).first()
 
-```
-if existing:
-    raise HTTPException(
-        status_code=400,
-        detail="SKU already exists"
+    if existing:
+        raise HTTPException(
+            status_code=400,
+            detail="SKU already exists"
+        )
+
+    if product.quantity < 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Quantity cannot be negative"
+        )
+
+    new_product = Product(
+        name=product.name,
+        sku=product.sku,
+        price=product.price,
+        quantity=product.quantity
     )
 
-if product.quantity < 0:
-    raise HTTPException(
-        status_code=400,
-        detail="Quantity cannot be negative"
-    )
+    db.add(new_product)
+    db.commit()
+    db.refresh(new_product)
 
-new_product = Product(
-    name=product.name,
-    sku=product.sku,
-    price=product.price,
-    quantity=product.quantity
-)
+    return new_product
 
-db.add(new_product)
-db.commit()
-db.refresh(new_product)
-
-return new_product
-```
 
 @router.get("/products")
 def get_products(
-db: Session = Depends(get_db)
+    db: Session = Depends(get_db)
 ):
-return db.query(Product).all()
+    return db.query(Product).all()
+
 
 @router.get("/products/{id}")
 def get_product(
-id: int,
-db: Session = Depends(get_db)
+    id: int,
+    db: Session = Depends(get_db)
 ):
-product = db.query(Product).filter(
-Product.id == id
-).first()
+    product = db.query(Product).filter(
+        Product.id == id
+    ).first()
 
-```
-if not product:
-    raise HTTPException(
-        status_code=404,
-        detail="Product not found"
-    )
+    if not product:
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found"
+        )
 
-return product
-```
+    return product
+
 
 @router.put("/products/{id}")
 def update_product(
-id: int,
-product: ProductCreate,
-db: Session = Depends(get_db)
+    id: int,
+    product: ProductCreate,
+    db: Session = Depends(get_db)
 ):
-existing_product = db.query(Product).filter(
-Product.id == id
-).first()
+    existing_product = db.query(Product).filter(
+        Product.id == id
+    ).first()
 
-```
-if not existing_product:
-    raise HTTPException(
-        status_code=404,
-        detail="Product not found"
-    )
+    if not existing_product:
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found"
+        )
 
-if product.quantity < 0:
-    raise HTTPException(
-        status_code=400,
-        detail="Quantity cannot be negative"
-    )
+    sku_exists = db.query(Product).filter(
+        Product.sku == product.sku,
+        Product.id != id
+    ).first()
 
-existing_product.name = product.name
-existing_product.sku = product.sku
-existing_product.price = product.price
-existing_product.quantity = product.quantity
+    if sku_exists:
+        raise HTTPException(
+            status_code=400,
+            detail="SKU already exists"
+        )
 
-db.commit()
-db.refresh(existing_product)
+    if product.quantity < 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Quantity cannot be negative"
+        )
 
-return existing_product
-```
+    existing_product.name = product.name
+    existing_product.sku = product.sku
+    existing_product.price = product.price
+    existing_product.quantity = product.quantity
+
+    db.commit()
+    db.refresh(existing_product)
+
+    return existing_product
+
 
 @router.delete("/products/{id}")
 def delete_product(
-id: int,
-db: Session = Depends(get_db)
+    id: int,
+    db: Session = Depends(get_db)
 ):
-product = db.query(Product).filter(
-Product.id == id
-).first()
+    product = db.query(Product).filter(
+        Product.id == id
+    ).first()
 
-```
-if not product:
-    raise HTTPException(
-        status_code=404,
-        detail="Product not found"
-    )
+    if not product:
+        raise HTTPException(
+            status_code=404,
+            detail="Product not found"
+        )
 
-db.delete(product)
-db.commit()
+    db.delete(product)
+    db.commit()
 
-return {
-    "message": "Product deleted"
-}
-```
+    return {
+        "message": "Product deleted successfully"
+    }
